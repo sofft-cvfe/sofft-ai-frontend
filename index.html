@@ -52,7 +52,7 @@
 
             btnSend.innerHTML = "Chargement...";
 
-            const response = await fetch('http://localhost:3000/ask', {
+            const response = await fetch('https://sofft-ai-backend-f2413d27ddfd.herokuapp.com/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question: inputValue })
