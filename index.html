@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOFFT AI Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1A1A1D; /* Fond sombre neutre */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-white">
+    <!-- Header avec le logo -->
+    <header class="w-full flex justify-center py-8">
+        <img src="Logo-sofft-blanc.png" alt="Logo SOFFT" class="w-48 h-auto"> <!-- Logo de 200px minimum -->
+    </header>
+
+    <!-- Titre principal -->
+    <h1 class="text-4xl font-bold mb-8">Bienvenue sur SOFFT AI</h1>
+
+    <!-- Section des réponses -->
+    <div id="response-container" class="w-3/4 max-w-2xl mt-8 mb-4 space-y-4">
+        <!-- Les réponses du chatbot s'afficheront ici -->
+    </div>
+
+    <!-- Champ de saisie et bouton -->
+    <div class="w-3/4 max-w-2xl">
+        <textarea 
+            id="question-input"
+            class="w-full p-4 rounded-lg bg-[#333333] text-white focus:outline-none focus:ring-2 focus:ring-[#446df6] 
+                   transition-shadow duration-200 shadow-lg placeholder:text-gray-400"
+            rows="5" 
+            placeholder="Posez votre question ici..."
+        ></textarea>
+
+        <button 
+            id="send-button"
+            class="mt-4 w-full py-3 bg-[#446df6] text-white font-semibold rounded-lg shadow-lg 
+                   hover:bg-[#03787c] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#e2e779]"
+        >
+            Envoyer
+        </button>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        async function sendQuestion(inputValue) {
+            // const question = document.getElementById('question-input').value;
+            const btnSend = document.getElementById('send-button');
+
+            btnSend.innerHTML = "Chargement...";
+
+            const response = await fetch('http://localhost:3000/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: inputValue })
+            });
+            
+            const data = await response.json();
+            return data.answer;
+        }
+
+        document.getElementById('send-button').addEventListener('click', async () => {
+            const questionInput = document.getElementById('question-input');
+            const question = questionInput.value.trim();
+            const responseContainer = document.getElementById('response-container');
+
+            if (question) {
+                // Afficher la question dans le container
+                const questionElement = document.createElement('div');
+                questionElement.className = 'bg-[#446df6] p-4 rounded-lg shadow-lg';
+                questionElement.textContent = `Vous: ${question}`;
+                responseContainer.appendChild(questionElement);
+
+                // Réinitialiser le champ de texte
+                questionInput.value = '';
+
+                // Simuler l'appel à l'API pour la réponse (remplacez cette partie par un appel réel)
+                const aiResponse = await sendQuestion(question);
+
+                // Afficher la réponse dans le container
+                async function responseElement() {
+                  let el = document.createElement('div');
+                  el.className = 'bg-[#333333] p-4 rounded-lg shadow-lg';
+                  el.textContent = `SOFFT AI: ${aiResponse}`;
+                  return el;
+                }
+
+                responseContainer.appendChild(await responseElement());
+               
+
+                // Faire défiler la page vers la nouvelle réponse
+                // responseElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
